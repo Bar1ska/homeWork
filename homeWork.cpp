@@ -1,41 +1,52 @@
 #include <iostream>
-#include <string>
+#include <vector>
 #include <Windows.h>
 using namespace std;
+
+vector<vector<int>> transpose(const vector<vector<int>>& matrix) {
+    if (matrix.empty() || matrix[0].empty()) {
+        return {};
+    }
+
+    int rows = matrix.size();
+    int cols = matrix[0].size();
+
+    vector<vector<int>> transposed(cols, vector<int>(rows));
+
+    // Заполняем транспонированную матрицу
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            transposed[j][i] = matrix[i][j];
+        }
+    }
+
+    return transposed;
+}
+
+void printMatrix(const vector<vector<int>>& matrix) {
+    for (const auto& row : matrix) {
+        for (int elem : row) {
+            cout << elem << " ";
+        }
+        cout << endl;
+    }
+}
 
 int main() {
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
-    long long number;
-    cout << "Введите целое число: ";
-    cin >> number;
+    vector<vector<int>> matrix = {
+        {1, 2, 3},
+        {4, 5, 6}
+    };
 
-    bool isNegative = false;
-    if (number < 0) {
-        isNegative = true;
-        number = -number;
-    }
+    cout << "Исходная матрица:" << endl;
+    printMatrix(matrix);
 
-    string numStr = to_string(number);
-    string result = "";
+    vector<vector<int>> transposed = transpose(matrix);
 
-    for (char digit : numStr) {
-        if (digit != '3' && digit != '6') {
-            result += digit;
-        }
-    }
-
-    if (result.empty()) {
-        cout << "Результат: 0" << endl;
-    }
-    else {
-        if (isNegative) {
-            cout << "Результат: -" << result << endl;
-        }
-        else {
-            cout << "Результат: " << result << endl;
-        }
-    }
+    cout << "\nТранспонированная матрица:" << endl;
+    printMatrix(transposed);
 
     return 0;
 }
