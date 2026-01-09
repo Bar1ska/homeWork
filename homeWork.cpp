@@ -5,27 +5,19 @@ using namespace std;
 int main() {
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
-    int cellSize;
-    int boardSize = 8;
+    int count = 0;
 
-    cout << "Введите размер клетки: ";
-    cin >> cellSize;
+    for (int num = 100; num <= 999; num++) {
+        int digit1 = num / 100;        
+        int digit2 = (num / 10) % 10;  
+        int digit3 = num % 10;         
 
-    for (int row = 0; row < boardSize * cellSize; row++) {
-        int cellRow = row / cellSize;
-
-        for (int col = 0; col < boardSize * cellSize; col++) {
-            int cellCol = col / cellSize;
-
-            if ((cellRow + cellCol) % 2 == 0) {
-                cout << '*';
-            }
-            else {
-                cout << '-';
-            }
+        if (digit1 == digit2 || digit1 == digit3 || digit2 == digit3) {
+            count++;
         }
-        cout << endl;
     }
+
+    cout << "Количество чисел с двумя одинаковыми цифрами: " << count << endl;
 
     return 0;
 }
