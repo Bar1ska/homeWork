@@ -1,69 +1,31 @@
 #include <iostream>
-#include <limits>
-#include <string>
 #include <Windows.h>
 using namespace std;
 
-void menu() {
+int main() {
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
-    int choice;
-    do {
-        cout << "\nМеню:\n";
-        cout << "1. Ввести число\n";
-        cout << "0. Выход\n";
-        cout << "Выберите действие: ";
-        cin >> choice;
+    int cellSize;
+    int boardSize = 8;
 
-        switch (choice) {
-        case 1: {
-            long long num;
-            cout << "Введите число: ";
-            cin >> num;
+    cout << "Введите размер клетки: ";
+    cin >> cellSize;
 
-            // Обработка отрицательных чисел
-            long long abs_num = (num < 0) ? -num : num;
+    for (int row = 0; row < boardSize * cellSize; row++) {
+        int cellRow = row / cellSize;
 
-            int digitCount = 0;
-            int zeroCount = 0;
-            long long sumDigits = 0;
-            long long temp = abs_num;
+        for (int col = 0; col < boardSize * cellSize; col++) {
+            int cellCol = col / cellSize;
 
-            if (temp == 0) {
-                digitCount = 1;
-                zeroCount = 1;
-                sumDigits = 0;
+            if ((cellRow + cellCol) % 2 == 0) {
+                cout << '*';
             }
             else {
-                while (temp > 0) {
-                    int digit = temp % 10;
-                    sumDigits += digit;
-                    if (digit == 0)
-                        zeroCount++;
-                    digitCount++;
-                    temp /= 10;
-                }
+                cout << '-';
             }
-
-            double average = (digitCount != 0) ? static_cast<double>(sumDigits) / digitCount : 0;
-
-            cout << "Количество цифр: " << digitCount << endl;
-            cout << "Сумма цифр: " << sumDigits << endl;
-            cout << "Среднее арифметическое: " << average << endl;
-            cout << "Количество нулей: " << zeroCount << endl;
-
-            break;
         }
-        case 0:
-            cout << "Выход из программы.\n";
-            break;
-        default:
-            cout << "Некорректный выбор. Попробуйте снова.\n";
-        }
-    } while (choice != 0);
-}
+        cout << endl;
+    }
 
-int main() {
-    menu();
     return 0;
 }
