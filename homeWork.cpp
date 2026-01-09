@@ -2,63 +2,45 @@
 #include <vector>
 #include <Windows.h>
 
-using namespace std;
-
-void insertColumn(vector<vector<int>>& array, int colIndex, const vector<int>& newColumn) {
-    int numRows = array.size();
-
-    
-    if (newColumn.size() != numRows) {
-        cout << "Длина вставляемого столбца должна быть равна количеству строк массива." << endl;
-        return;
-    }
-
-    
-    for (int i = 0; i < numRows; ++i) {
-        if (colIndex < 0 || colIndex > array.size()) {
-            cout << "Некорректный индекс столбца." << endl;
-            return;
+void deleteColumn(std::vector<std::vector<int>>& matrix, int colIndex) {
+    for (auto& row : matrix) {
+        if (colIndex >= 0 && colIndex < row.size()) {
+            row.erase(row.begin() + colIndex);
         }
-        array.insert(array.begin() + colIndex, newColumn);
     }
 }
 
-int main() 
-{
+int main() {
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
-    int rows, cols;
-    cout << "Введите количество строк: ";
-    cin >> rows;
-    cout << "Введите количество столбцов: ";
-    cin >> cols;
+    int rows, cols, colToRemove;
 
-    vector<vector<int>> array(rows, vector<int>(cols));
-    cout << "Введите элементы массива:" << endl;
+    std::cout << "Введите количество строк: ";
+    std::cin >> rows;
+    std::cout << "Введите количество столбцов: ";
+    std::cin >> cols;
+
+    std::vector<std::vector<int>> matrix(rows, std::vector<int>(cols));
+
+    std::cout << "Введите элементы матрицы:\n";
     for (int i = 0; i < rows; ++i) {
+        std::cout << "Строка " << i + 1 << ": ";
         for (int j = 0; j < cols; ++j) {
-            cin >> array[i][j];
+            std::cin >> matrix[i][j];
         }
     }
 
-    int insertPos;
-    cout << "Введите индекс позиции для вставки нового столбца (от 0 до " << cols << "): ";
-    cin >> insertPos;
+    std::cout << "Введите номер столбца для удаления (от 0 до " << cols - 1 << "): ";
+    std::cin >> colToRemove;
 
-    vector<int> newColumn(rows);
-    cout << "Введите элементы нового столбца:" << endl;
-    for (int i = 0; i < rows; ++i) {
-        cin >> newColumn[i];
-    }
+    deleteColumn(matrix, colToRemove);
 
-    insertColumn(array, insertPos, newColumn);
-
-    cout << "Массив после вставки столбца:" << endl;
-    for (const auto& row : array) {
+    std::cout << "Матрица после удаления столбца:\n";
+    for (const auto& row : matrix) {
         for (const auto& elem : row) {
-            cout << elem << " ";
+            std::cout << elem << " ";
         }
-        cout << endl;
+        std::cout << "\n";
     }
 
     return 0;
