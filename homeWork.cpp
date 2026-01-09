@@ -1,21 +1,41 @@
 #include <iostream>
+#include <string>
 #include <Windows.h>
 using namespace std;
 
 int main() {
-    int count = 0;
+    SetConsoleCP(1251);
+    SetConsoleOutputCP(1251);
+    long long number;
+    cout << "Введите целое число: ";
+    cin >> number;
 
-    for (int num = 100; num <= 999; num++) {
-        int digit1 = num / 100;        
-        int digit2 = (num / 10) % 10;  
-        int digit3 = num % 10;         
-        
-        if (digit1 != digit2 && digit1 != digit3 && digit2 != digit3) {
-            count++;
+    bool isNegative = false;
+    if (number < 0) {
+        isNegative = true;
+        number = -number;
+    }
+
+    string numStr = to_string(number);
+    string result = "";
+
+    for (char digit : numStr) {
+        if (digit != '3' && digit != '6') {
+            result += digit;
         }
     }
 
-    cout << "Количество трёхзначных чисел с разными цифрами: " << count << endl;
+    if (result.empty()) {
+        cout << "Результат: 0" << endl;
+    }
+    else {
+        if (isNegative) {
+            cout << "Результат: -" << result << endl;
+        }
+        else {
+            cout << "Результат: " << result << endl;
+        }
+    }
 
     return 0;
 }
