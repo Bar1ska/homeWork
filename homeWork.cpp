@@ -1,77 +1,52 @@
 #include <iostream>
 #include <fstream>
+#include <vector>
 #include <string>
-#include <codecvt>
 #include <Windows.h>
 
 using namespace std;
 
-wchar_t encryptChar(wchar_t ch, int key) {
-    wstring lowerRus = L"абвгдежзийклмнопрстуфхцчшщъыьэю€";
-    wstring upperRus = L"јЅ¬√ƒ≈∆«»… ЋћЌќѕ–—“”‘’÷„ЎўЏџ№Ёёя";
-
-    size_t pos = lowerRus.find(ch);
-    if (pos != wstring::npos) {
-        int newPos = (pos + key) % lowerRus.length();
-        return lowerRus[newPos];
-    }
-
-    pos = upperRus.find(ch);
-    if (pos != wstring::npos) {
-        int newPos = (pos + key) % upperRus.length();
-        return upperRus[newPos];
-    }
-
-    return ch;
-}
-
-wstring encryptText(const wstring& text, int key) {
-    wstring result;
-    for (wchar_t ch : text) {
-        result += encryptChar(ch, key);
-    }
-    return result;
-}
-
 int main() {
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
+    string inputFileName = "file1.txt";
+    string outputFileName = "file2.txt";
 
-    int key;
-
-    cout << "¬ведите ключ шифровани€ (число): ";
-    cin >> key;
-
-    wifstream inputFile("file1.txt");
-    inputFile.imbue(locale(inputFile.getloc(),
-        new codecvt_utf8<wchar_t>));
+    ifstream inputFile(inputFileName);
 
     if (!inputFile.is_open()) {
-        cerr << "ќшибка открыти€ входного файла!" << endl;
+        cerr << "ќшибка открыти€ файла " << inputFileName << endl;
         return 1;
     }
 
-    wstring text, line;
+    vector<string> lines;
+    string line;
+
     while (getline(inputFile, line)) {
-        text += line + L"\n";
+        lines.push_back(line);
     }
+
     inputFile.close();
 
-    wstring encryptedText = encryptText(text, key);
+    if (lines.empty()) {
+        cout << "‘айл пустой, нечего удал€ть" << endl;
+        return 0;
+    }
 
-    wofstream outputFile("file2.txt");
-    outputFile.imbue(locale(outputFile.getloc(),
-        new codecvt_utf8<wchar_t>));
+    ofstream outputFile(outputFileName);
 
     if (!outputFile.is_open()) {
-        cerr << "ќшибка открыти€ выходного файла!" << endl;
+        cerr << "ќшибка открыти€ файла " << outputFileName << endl;
         return 1;
     }
 
-    outputFile << encryptedText;
+    for (size_t i = 0; i < lines.size() - 1; i++) {
+        outputFile << lines[i] << endl;
+    }
+
     outputFile.close();
 
-    cout << L"“екст успешно зашифрован и записан в файл: file2.txt" << endl;
+    cout << "ѕоследн€€ строка удалена. –езультат записан в " << outputFileName << endl;
 
     return 0;
 }
