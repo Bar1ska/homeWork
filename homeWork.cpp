@@ -1,68 +1,81 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cctype>
 #include <Windows.h>
 using namespace std;
+
+bool isVowel(char c) {
+    c = tolower(c);
+    return (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' ||
+        c == 'а' || c == 'е' || c == 'ё' || c == 'и' || c == 'о' ||
+        c == 'у' || c == 'ы' || c == 'э' || c == 'ю' || c == 'я');
+}
+
+bool isConsonant(char c) {
+    c = tolower(c);
+    if ((c >= 'a' && c <= 'z') && !isVowel(c)) {
+        return true;
+    }
+    if ((c >= 'а' && c <= 'я') || c == 'ё') {
+        return !isVowel(c);
+    }
+    return false;
+}
 
 int main() {
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
-    ifstream file1("file1.txt");
-    ifstream file2("file2.txt");
-
-    if (!file1.is_open()) {
-        cout << "Ошибка открытия файла file1.txt" << endl;
+    ifstream inputFile("file1.txt");
+    if (!inputFile.is_open()) {
+        cerr << "Ошибка открытия входного файла!" << endl;
         return 1;
     }
 
-    if (!file2.is_open()) {
-        cout << "Ошибка открытия файла file2.txt" << endl;
+    int charCount = 0;      
+    int lineCount = 0;      
+    int vowelCount = 0;     
+    int consonantCount = 0; 
+    int digitCount = 0;     
+
+    string line;
+
+    while (getline(inputFile, line)) {
+        lineCount++;
+
+        for (char c : line) {
+            charCount++;
+
+            if (isdigit(c)) {
+                digitCount++;
+            }
+            else if (isVowel(c)) {
+                vowelCount++;
+            }
+            else if (isConsonant(c)) {
+                consonantCount++;
+            }
+        }
+    }
+
+    inputFile.close();
+
+    ofstream outputFile("file2.txt");
+    if (!outputFile.is_open()) {
+        cerr << "Ошибка создания выходного файла!" << endl;
         return 1;
     }
 
-    string line1, line2;
-    int lineNumber = 1;
-    bool filesMatch = true;
+    outputFile << "=== Статистика файла file1.txt ===" << endl;
+    outputFile << "Количество символов: " << charCount << endl;
+    outputFile << "Количество строк: " << lineCount << endl;
+    outputFile << "Количество гласных букв: " << vowelCount << endl;
+    outputFile << "Количество согласных букв: " << consonantCount << endl;
+    outputFile << "Количество цифр: " << digitCount << endl;
 
-    while (true) {
-        bool hasLine1 = (bool)getline(file1, line1);
-        bool hasLine2 = (bool)getline(file2, line2);
+    outputFile.close();
 
-        if (hasLine1 != hasLine2) {
-            cout << "Файлы имеют разное количество строк!" << endl;
-            if (hasLine1) {
-                cout << "Строка " << lineNumber << " в file1.txt: " << line1 << endl;
-                cout << "Строка " << lineNumber << " в file2.txt: отсутствует" << endl;
-            }
-            else {
-                cout << "Строка " << lineNumber << " в file1.txt: отсутствует" << endl;
-                cout << "Строка " << lineNumber << " в file2.txt: " << line2 << endl;
-            }
-            filesMatch = false;
-            break;
-        }
-
-        if (!hasLine1 && !hasLine2) {
-            break;
-        }
-
-        if (line1 != line2) {
-            cout << "Несовпадение в строке " << lineNumber << ":" << endl;
-            cout << "file1.txt: " << line1 << endl;
-            cout << "file2.txt: " << line2 << endl;
-            filesMatch = false;
-            break;
-        }
-
-        lineNumber++;
-    }
-
-    if (filesMatch) {
-        cout << "Все строки в файлах совпадают!" << endl;
-    }
-
-    file1.close();
-    file2.close();
+    cout << "Статистика успешно записана в файл file2.txt" << endl;
 
     return 0;
 }
