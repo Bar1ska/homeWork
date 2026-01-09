@@ -1,46 +1,62 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <algorithm>
+#include <sstream>
 #include <Windows.h>
 
 using namespace std;
 
+string replaceAll(string str, const string& from, const string& to) {
+    size_t start_pos = 0;
+    while ((start_pos = str.find(from, start_pos)) != string::npos) {
+        str.replace(start_pos, from.length(), to);
+        start_pos += to.length();
+    }
+    return str;
+}
+
 int main() {
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
-    string searchWord, word;
-    int count = 0;
+    string searchWord, replaceWord;
 
     cout << "Введите слово для поиска: ";
-    cin >> searchWord;
+    getline(cin, searchWord);
 
-    ifstream file("file1.txt");
+    cout << "Введите слово для замены: ";
+    getline(cin, replaceWord);
 
-    if (!file.is_open()) {
-        cout << "Ошибка открытия файла!" << endl;
+    ifstream inputFile("file1.txt");
+    if (!inputFile.is_open()) {
+        cerr << "Ошибка открытия файла!" << endl;
         return 1;
     }
 
-    while (file >> word) {
-        word.erase(remove_if(word.begin(), word.end(),
-            [](char c) { return !isalnum(c); }),
-            word.end());
+    stringstream buffer;
+    buffer << inputFile.rdbuf();
+    string content = buffer.str();
+    inputFile.close();
 
-        transform(word.begin(), word.end(), word.begin(), ::tolower);
-        transform(searchWord.begin(), searchWord.end(),
-            searchWord.begin(), ::tolower);
-
-        if (word == searchWord) {
-            count++;
-        }
+    int count = 0;
+    size_t pos = 0;
+    while ((pos = content.find(searchWord, pos)) != string::npos) {
+        count++;
+        pos += searchWord.length();
     }
 
-    file.close();
+    content = replaceAll(content, searchWord, replaceWord);
 
-    // Вывод результата
-    cout << "Слово \"" << searchWord << "\" встречается "
-        << count << " раз(а)" << endl;
+    ofstream outputFile("file1.txt");
+    if (!outputFile.is_open()) {
+        cerr << "Ошибка записи в файл!" << endl;
+        return 1;
+    }
+
+    outputFile << content;
+    outputFile.close();
+
+    cout << "Замена выполнена успешно!" << endl;
+    cout << "Количество замен: " << count << endl;
 
     return 0;
 }
