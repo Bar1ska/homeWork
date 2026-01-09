@@ -1,126 +1,81 @@
-#define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
-#include <fstream>
-#include <cstring>
-#include <cctype>
+#include <cmath>
 #include <Windows.h>
 
 using namespace std;
 
-const int MAX_SIZE = 10000;
+struct Complex {
+    double real;  
+    double imag;  
 
-void findAndReplace(char* text, const char* oldWord, const char* newWord) {
-    char result[MAX_SIZE] = "";
-    char* pos = text;
-    char* found;
-    int oldLen = strlen(oldWord);
-    int newLen = strlen(newWord);
+    Complex(double r = 0.0, double i = 0.0) : real(r), imag(i) {}
 
-    while ((found = strstr(pos, oldWord)) != nullptr) {
-        strncat(result, pos, found - pos);
-        strcat(result, newWord);
-        pos = found + oldLen;
-    }
-    strcat(result, pos);
-    strcpy(text, result);
-}
-
-void capitalizeSentences(char* text) {
-    bool newSentence = true;
-
-    for (int i = 0; text[i] != '\0'; i++) {
-        if (newSentence && isalpha(text[i])) {
-            text[i] = toupper(text[i]);
-            newSentence = false;
-        }
-
-        if (text[i] == '.' || text[i] == '!' || text[i] == '?') {
-            newSentence = true;
-        }
-    }
-}
-
-void countLetters(const char* text) {
-    int letters[256] = { 0 };
-
-    for (int i = 0; text[i] != '\0'; i++) {
-        if (isalpha(text[i])) {
-            char ch = tolower(text[i]);
-            letters[(unsigned char)ch]++;
-        }
+    Complex operator+(const Complex& other) const {
+        return Complex(real + other.real, imag + other.imag);
     }
 
-    cout << "\n=== Статистика букв ===" << endl;
-    for (int i = 0; i < 256; i++) {
-        if (letters[i] > 0) {
-            cout << (char)i << ": " << letters[i] << endl;
-        }
-    }
-}
-
-void countDigits(const char* text) {
-    int digits[10] = { 0 };
-    int totalDigits = 0;
-
-    for (int i = 0; text[i] != '\0'; i++) {
-        if (isdigit(text[i])) {
-            digits[text[i] - '0']++;
-            totalDigits++;
-        }
+    Complex operator-(const Complex& other) const {
+        return Complex(real - other.real, imag - other.imag);
     }
 
-    cout << "\n=== Статистика цифр ===" << endl;
-    for (int i = 0; i < 10; i++) {
-        if (digits[i] > 0) {
-            cout << i << ": " << digits[i] << endl;
-        }
+    Complex operator*(const Complex& other) const {
+        return Complex(
+            real * other.real - imag * other.imag,
+            real * other.imag + imag * other.real
+        );
     }
-    cout << "Всего цифр: " << totalDigits << endl;
-}
+
+    Complex operator/(const Complex& other) const {
+        double denominator = other.real * other.real + other.imag * other.imag;
+        if (denominator == 0) {
+            cout << "Ошибка: деление на ноль!" << endl;
+            return Complex(0, 0);
+        }
+        return Complex(
+            (real * other.real + imag * other.imag) / denominator,
+            (imag * other.real - real * other.imag) / denominator
+        );
+    }
+
+    void print() const {
+        if (imag >= 0)
+            cout << real << " + " << imag << "i";
+        else
+            cout << real << " - " << -imag << "i";
+    }
+};
 
 int main() {
-    setlocale(LC_ALL, "Russian");
+    Complex c1(3, 4);   
+    Complex c2(1, -2);  
 
-    char text[MAX_SIZE];
-    char oldWord[100], newWord[100];
+    cout << "Первое число: ";
+    c1.print();
+    cout << endl;
 
-    ifstream inputFile("file1.txt");
-    if (!inputFile.is_open()) {
-        cout << "Ошибка открытия файла file1.txt" << endl;
-        return 1;
-    }
+    cout << "Второе число: ";
+    c2.print();
+    cout << endl << endl;
 
-    text[0] = '\0';
-    char line[1000];
-    while (inputFile.getline(line, 1000)) {
-        strcat(text, line);
-        strcat(text, " ");
-    }
-    inputFile.close();
+    Complex sum = c1 + c2;
+    cout << "Сумма: ";
+    sum.print();
+    cout << endl;
 
-    cout << "Исходный текст:\n" << text << endl;
+    Complex diff = c1 - c2;
+    cout << "Разность: ";
+    diff.print();
+    cout << endl;
 
-    cout << "\nВведите слово для замены: ";
-    cin >> oldWord;
-    cout << "Введите новое слово: ";
-    cin >> newWord;
+    Complex prod = c1 * c2;
+    cout << "Произведение: ";
+    prod.print();
+    cout << endl;
 
-    findAndReplace(text, oldWord, newWord);
-    cout << "\nТекст после замены:\n" << text << endl;
-
-    capitalizeSentences(text);
-    cout << "\nТекст с заглавными буквами в начале предложений:\n" << text << endl;
-
-    countLetters(text);
-
-    countDigits(text);
-
-    ofstream outputFile("file2.txt");
-    if (outputFile.is_open()) {
-        outputFile << text;
-        outputFile.close();
-        cout << "\nРезультат сохранен в файл file2.txt" << endl;
-    }
+    Complex quot = c1 / c2;
+    cout << "Частное: ";
+    quot.print();
+    cout << endl;
 
     return 0;
 }
