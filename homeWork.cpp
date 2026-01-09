@@ -1,81 +1,108 @@
 #include <iostream>
-#include <cmath>
-#include <Windows.h>
-
+#include <string>
+#include <vector>
 using namespace std;
 
-struct Complex {
-    double real;  
-    double imag;  
-
-    Complex(double r = 0.0, double i = 0.0) : real(r), imag(i) {}
-
-    Complex operator+(const Complex& other) const {
-        return Complex(real + other.real, imag + other.imag);
-    }
-
-    Complex operator-(const Complex& other) const {
-        return Complex(real - other.real, imag - other.imag);
-    }
-
-    Complex operator*(const Complex& other) const {
-        return Complex(
-            real * other.real - imag * other.imag,
-            real * other.imag + imag * other.real
-        );
-    }
-
-    Complex operator/(const Complex& other) const {
-        double denominator = other.real * other.real + other.imag * other.imag;
-        if (denominator == 0) {
-            cout << "Ошибка: деление на ноль!" << endl;
-            return Complex(0, 0);
-        }
-        return Complex(
-            (real * other.real + imag * other.imag) / denominator,
-            (imag * other.real - real * other.imag) / denominator
-        );
-    }
-
-    void print() const {
-        if (imag >= 0)
-            cout << real << " + " << imag << "i";
-        else
-            cout << real << " - " << -imag << "i";
-    }
+struct Car {
+    double length;
+    double clearance;
+    double engineVolume;
+    int enginePower;
+    double wheelDiameter;
+    string color;
+    string transmissionType;
 };
 
+void setCar(Car& car, double len, double clear, double engVol,
+    int engPow, double wheelDiam, string col, string trans) {
+    car.length = len;
+    car.clearance = clear;
+    car.engineVolume = engVol;
+    car.enginePower = engPow;
+    car.wheelDiameter = wheelDiam;
+    car.color = col;
+    car.transmissionType = trans;
+}
+
+void displayCar(const Car& car) {
+    cout << "=== Характеристики автомобиля ===" << endl;
+    cout << "Длина: " << car.length << " м" << endl;
+    cout << "Клиренс: " << car.clearance << " см" << endl;
+    cout << "Объем двигателя: " << car.engineVolume << " л" << endl;
+    cout << "Мощность двигателя: " << car.enginePower << " л.с." << endl;
+    cout << "Диаметр колес: " << car.wheelDiameter << " дюймов" << endl;
+    cout << "Цвет: " << car.color << endl;
+    cout << "Коробка передач: " << car.transmissionType << endl;
+    cout << "=================================" << endl;
+}
+
+vector<int> findByColor(const vector<Car>& cars, const string& color) {
+    vector<int> indices;
+    for (size_t i = 0; i < cars.size(); i++) {
+        if (cars[i].color == color) {
+            indices.push_back(i);
+        }
+    }
+    return indices;
+}
+
+vector<int> findByTransmission(const vector<Car>& cars, const string& trans) {
+    vector<int> indices;
+    for (size_t i = 0; i < cars.size(); i++) {
+        if (cars[i].transmissionType == trans) {
+            indices.push_back(i);
+        }
+    }
+    return indices;
+}
+
+vector<int> findByPower(const vector<Car>& cars, int minPower) {
+    vector<int> indices;
+    for (size_t i = 0; i < cars.size(); i++) {
+        if (cars[i].enginePower >= minPower) {
+            indices.push_back(i);
+        }
+    }
+    return indices;
+}
+
 int main() {
-    Complex c1(3, 4);   
-    Complex c2(1, -2);  
+    setlocale(LC_ALL, "Russian");
 
-    cout << "Первое число: ";
-    c1.print();
+    vector<Car> cars(3);
+
+    setCar(cars[0], 4.5, 18.5, 2.0, 150, 17, "Красный", "Автомат");
+    setCar(cars[1], 4.8, 20.0, 3.5, 249, 18, "Черный", "Механика");
+    setCar(cars[2], 4.2, 16.0, 1.6, 110, 16, "Красный", "Автомат");
+
+    cout << "\n--- ВСЕ АВТОМОБИЛИ ---\n" << endl;
+    for (size_t i = 0; i < cars.size(); i++) {
+        cout << "Автомобиль #" << i + 1 << endl;
+        displayCar(cars[i]);
+        cout << endl;
+    }
+
+    cout << "\n--- ПОИСК ---\n" << endl;
+
+    cout << "Поиск красных автомобилей:" << endl;
+    vector<int> redCars = findByColor(cars, "Красный");
+    for (int idx : redCars) {
+        cout << "Найден автомобиль #" << idx + 1 << endl;
+    }
     cout << endl;
 
-    cout << "Второе число: ";
-    c2.print();
-    cout << endl << endl;
-
-    Complex sum = c1 + c2;
-    cout << "Сумма: ";
-    sum.print();
+    cout << "Поиск автомобилей с автоматической коробкой:" << endl;
+    vector<int> autoCars = findByTransmission(cars, "Автомат");
+    for (int idx : autoCars) {
+        cout << "Найден автомобиль #" << idx + 1 << endl;
+    }
     cout << endl;
 
-    Complex diff = c1 - c2;
-    cout << "Разность: ";
-    diff.print();
-    cout << endl;
-
-    Complex prod = c1 * c2;
-    cout << "Произведение: ";
-    prod.print();
-    cout << endl;
-
-    Complex quot = c1 / c2;
-    cout << "Частное: ";
-    quot.print();
-    cout << endl;
+    cout << "Поиск автомобилей с мощностью >= 150 л.с.:" << endl;
+    vector<int> powerfulCars = findByPower(cars, 150);
+    for (int idx : powerfulCars) {
+        cout << "Найден автомобиль #" << idx + 1 << endl;
+    }
 
     return 0;
 }
