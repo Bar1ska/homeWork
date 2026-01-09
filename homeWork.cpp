@@ -2,35 +2,46 @@
 #include <vector>
 #include <cstdlib>
 #include <ctime>
+#include <Windows.h>
 
 int main() {
-    const int size = 10; 
-    std::vector<int> arr(size);
+    SetConsoleCP(1251);
+    SetConsoleOutputCP(1251);
+    int size, min_value, max_value, threshold;
 
-    
+    std::cout << "Введите размер массива: ";
+    std::cin >> size;
+
+    std::cout << "Введите минимальное значение диапазона: ";
+    std::cin >> min_value;
+
+    std::cout << "Введите максимальное значение диапазона: ";
+    std::cin >> max_value;
+
     std::srand(std::time(nullptr));
 
-    
-    for (int& num : arr) {
-        num = std::rand() % 100; 
+    std::vector<int> array(size);
+    for (int i = 0; i < size; ++i) {
+        array[i] = min_value + std::rand() % (max_value - min_value + 1);
     }
 
-    
-    int min = arr[0];
-    int max = arr[0];
-
-    
-    for (const int& num : arr) {
-        if (num < min) min = num;
-        if (num > max) max = num;
-    }
-
-    
-    std::cout << "Массив: ";
-    for (const int& num : arr) {
+    std::cout << "Сгенерированный массив: ";
+    for (int num : array) {
         std::cout << num << " ";
     }
-    std::cout << "\nМинимальный элемент: " << min << "\nМаксимальный элемент: " << max << std::endl;
+    std::cout << std::endl;
+
+    std::cout << "Введите значение для сравнения: ";
+    std::cin >> threshold;
+
+    int sum = 0;
+    for (int num : array) {
+        if (num < threshold) {
+            sum += num;
+        }
+    }
+
+    std::cout << "Сумма элементов, меньше указанный значения: " << sum << std::endl;
 
     return 0;
 }
