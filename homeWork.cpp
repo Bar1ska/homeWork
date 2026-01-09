@@ -1,86 +1,36 @@
 #include <iostream>
 #include <vector>
-#include <algorithm> 
-
-
-void shiftRows(std::vector<std::vector<int>>& matrix, int numShifts, bool toRight) {
-    int M = matrix.size();
-    if (M == 0) return;
-    int N = matrix.size();
-
-    for (int i = 0; i < M; ++i) {
-        int shift = numShifts % N;
-        if (!toRight) shift = N - shift; 
-        std::rotate(matrix.begin(), matrix.begin() + shift, matrix.end());
-    }
-}
-
-
-void shiftColumns(std::vector<std::vector<int>>& matrix, int numShifts, bool downward) {
-    int M = matrix.size();
-    if (M == 0) return;
-    int N = matrix.size();
-
-    for (int j = 0; j < N; ++j) {
-        int shift = numShifts % M;
-        if (!downward) shift = M - shift; 
-        std::vector<int> column(M);
-        for (int i = 0; i < M; ++i) {
-            column = matrix[i];
-        }
-        std::rotate(column.begin(), column.begin() + shift, column.end());
-        for (int i = 0; i < M; ++i) {
-            matrix[i] = column;
-        }
-    }
-}
+#include <cstdlib>
+#include <ctime>
 
 int main() {
-    int M, N;
-    std::cout << "Введите количество строк M: ";
-    std::cin >> M;
-    std::cout << "Введите количество столбцов N: ";
-    std::cin >> N;
-
-    std::vector<std::vector<int>> matrix(M, std::vector<int>(N));
+    const int size = 10; 
+    std::vector<int> arr(size);
 
     
-    std::cout << "Введите элементы матрицы:\n";
-    for (int i = 0; i < M; ++i) {
-        for (int j = 0; j < N; ++j) {
-            std::cin >> matrix[i][j];
-        }
+    std::srand(std::time(nullptr));
+
+    
+    for (int& num : arr) {
+        num = std::rand() % 100; 
     }
 
-    int numShifts;
-    char direction;
-    std::cout << "Введите количество сдвигов: ";
-    std::cin >> numShifts;
-    std::cout << "Сдвигать строки или столбцы? (s для строк, c для столбцов): ";
-    char axis;
-    std::cin >> axis;
-    bool shiftRightOrDown = true;
-    std::cout << "Направление сдвига? (r для вправо или вниз, l для влево или вверх): ";
-    std::cin >> direction;
+    
+    int min = arr[0];
+    int max = arr[0];
 
-    if (axis == 's') {
-        shiftRightOrDown = (direction == 'r');
-        shiftRows(matrix, numShifts, shiftRightOrDown);
-    }
-    else if (axis == 'c') {
-        shiftRightOrDown = (direction == 'd'); 
-        if (direction == 'd') shiftRightOrDown = true;
-        else if (direction == 'u') shiftRightOrDown = false;
-        shiftColumns(matrix, numShifts, shiftRightOrDown);
+    
+    for (const int& num : arr) {
+        if (num < min) min = num;
+        if (num > max) max = num;
     }
 
-    std::cout << "Изменённая матрица:\n";
-    for (const auto& row : matrix) {
-        for (const auto& elem : row) {
-            std::cout << elem << ' ';
-        }
-        std::cout << '\n';
+    
+    std::cout << "Массив: ";
+    for (const int& num : arr) {
+        std::cout << num << " ";
     }
+    std::cout << "\nМинимальный элемент: " << min << "\nМаксимальный элемент: " << max << std::endl;
 
     return 0;
 }
